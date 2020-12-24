@@ -8,6 +8,8 @@ Mikrotik scheduler calls presence control script with specified interval to chec
 When script detects device state change in the network, it will send HTTP request to a desired server to report that device is registered, same when device is no longer present in the WiFi network. 
 To improve reliability with multiple access point setup, when device is registered script will send up to `arriveSendTimes` requests to the server, as it may happen that access point where device was unregistered can send this event after registration on the second access point happened. 
 
+Tested on `RouterOS v6.45.1 (stable)`
+
 ## Installation and Configuration
 
 ### Configuration 
