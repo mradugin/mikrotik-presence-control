@@ -1,0 +1,39 @@
+:local arriveSendTimes 5
+:global subjects {{name="User1";mac="FF:FF:FF:FF:FF:FF";state=0};{name="User2";mac="AA:BB:CC:DD:EE:FF";state=0};{name="User3";mac="DD:DD:DD:DD:DD:DD";state=0}}
+
+:put "Subjects:"
+:foreach entry in=$subjects do={
+  :put ($entry)
+}
+
+:local clients [:toarray ""] 
+:put "Registered WiFi clients:"
+:foreach i in=[/interface wireless registration-table find] do={
+  :local mac [/interface wireless registration-table get $i value-name=mac-address]
+  :set $clients ($clients, "$mac")
+  :put $mac
+}
+
+:put "Checking subject presence..."
+
+:foreach entry in=$subjects do={
+  :local state ($entry->"state")
+  :local name ($entry->"name")
+  :foreach mac in=$clients do={
+    :if ($mac = $entry->"mac") do={
+       :set $state ($state + 1)
+       :put "$name present"
+    }
+  } 
+  if ((($entry->"state") = $state) and ($state != 0)) do={
+    :put "$name left"
+    :set ($entry->"state") 0
+    :tool fetch mode=http http-method=post http-data="" url="http://homebridge:51828/?sensor=$name&state=false"
+  } else={
+    if ((($entry->"state") != $state) and ($state <= $arriveSendTimes)) do={
+      :put "$name arrived"
+      :set ($entry->"state") $state
+      :tool fetch mode=http http-method=post http-data="" url="http://homebridge:51828/?sensor=$name&state=true"
+    }
+  }
+}
