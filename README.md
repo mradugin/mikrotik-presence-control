@@ -6,7 +6,7 @@ This approach works very reliably with Apple iPhone, iPad and other devices that
 
 Mikrotik scheduler calls presence control script with specified interval to check if desired devices are registered in WiFi network. 
 When script detects device state change in the network, it will send HTTP request to a desired server to report that device is registered, same when device is no longer present in the WiFi network. 
-To improve reliability with multiple access point setup, when device is registered script will send up to `arriveSendTimes` requests to the server, as it may happen that access point where device was unregistered can send this event after registration on the second access point happened. 
+To improve reliability with multiple access point setup, when device is registered script will send up to `arriveSendTimes` requests to the server, as it may happen that access point where device was unregistered sends leave event to the server after device is registered on another access point happened, resulting in device being treated as not present by the server.
 
 Tested on `RouterOS v6.45.1 (stable)`
 
